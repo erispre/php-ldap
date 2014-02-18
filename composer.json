@@ -1,0 +1,22 @@
+{
+    "name": "erispre/php-ldap",
+    "description": "Object-oriented interface for LDAP in PHP",
+    "keywords": ["ldap"],
+    "license": "GPL-3.0+",
+    "authors": [
+	{
+	    "name": "Eric Spreen",
+	    "email": "erispre@gmail.com",
+	    "role": "Developer"
+	}
+    ],
+    "require-dev": {
+        "phpdocumentor/phpdocumentor": "2.*",
+	"phpunit/phpunit": "3.7.*"
+    },
+    "autoload":  {
+	"psr-0": {
+	    "Ldap\\": "src/"
+	}
+    }
+}

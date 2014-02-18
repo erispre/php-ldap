@@ -1,0 +1,20 @@
+<?php
+
+use Ldap\Config\ConnectionConfig;
+
+class ConnectionConfigTest
+extends PHPUnit_Framework_TestCase
+{
+    public function configProvider()
+    {
+        return array(array(
+            'hostname' => 'babylon.fmf.nl',
+            'root' => 'dc=fmf,dc=nl',
+        ));
+    }
+    
+    public function constructTest($config)
+    {
+        
+    }
+}

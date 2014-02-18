@@ -1,0 +1,149 @@
+<?php
+/**
+ * This file is part of php-ldap.
+ *
+ * php-ldap is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * php-ldap is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with php-ldap.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * @license GNU General Public License, version 3
+ * @author Eric Spreen
+ * @copyright 2014 Eric Spreen
+ */
+
+namespace Ldap\Config;
+
+use Ldap\Exception\Config\InvalidConfigException;
+use Ldap\Exception\Config\MissingConfigKeyException;
+use Ldap\Exception\Exception;
+
+/**
+ * Configuration for the LDAP Manager.
+ *
+ * @package Ldap\Config
+ */
+class Config
+{
+    /**
+     * Schemas
+     * @var SchemaConfig[]
+     */
+    protected $schemas;
+
+    /**
+     * Connection configuration
+     * @var ConnectionConfig[]
+     */
+    protected $connections;
+
+    /**
+     * Create a new configuration.
+     *
+     * The `$config` array must contain the following **required**
+     * keys:
+     * 
+     * - (array|SchemaConfig[]) `schemas`: Array of schema definitions
+     * {@link SchemaConfig}.
+     * - (array|ConnectionConfig[]) `connections`: Array of connection
+     * definitions {@link ConnectionConfig}.
+     *
+     * @Param array $config
+     */
+    public function __construct(array $config)
+    {
+        foreach (array('schemas', 'connections') as $key) {
+            if (!isset($config[$key])) {
+                throw new MissingConfigKeyException($key);
+            }
+        }
+
+        foreach ($config['schemas'] as $name => $schema) {
+            $this->addSchema($name, $schema);
+        }
+        foreach ($config['connections'] as $name => $connection) {
+            $this->addConnection($name, $connection);
+        }
+    }
+
+    /**
+     * Add schema configuration.
+     *
+     * @param string $name Schema name
+     * @param array|SchemaConfig $config Schema configuration
+     * @return $this
+     */
+    public function addSchema($name, $config)
+    {
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException("Schema name should be a string.");
+        }
+
+        if (is_array($config)) {
+            $config = new SchemaConfig($config);
+        }
+        if (!($config instanceof SchemaConfig)) {
+            throw new InvalidConfigException("Configuration must be an array or a Ldap\Config\SchemaConfig object.");
+        }
+
+        $this->schemas[$name] = $config;
+
+        return $this;
+    }
+
+    /**
+     * Add a connection configuration.
+     *
+     * @param string $name Connection name
+     * @param array|ConnectionConfig $config Connection configuration
+     * @return $this
+     */
+    public function addConnection($name, $config)
+    {
+        if (!is_string($name))
+            throw new \InvalidArgumentException("Connection name should be a string.");
+        if (is_array($config)) {
+            $config = new ConnectionConfig($config);
+        }
+        if (!($config instanceof ConnectionConfig)) {
+            throw new InvalidConfigException("Configuration should be an array or an instance of Ldap\Config\ConnectionConfig.");
+        }
+
+        $this->connections[$name] = $config;
+    }
+
+    /**
+     * Check if a connection with a given name is available.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasConnection($name)
+    {
+        return array_key_exists($name, $this->connections);
+    }
+
+    /**
+     * Get the configuration for a connection with the given name.
+     *
+     * @param string $name
+     * @return ConnectionConfig
+     * @throws Exception If the connection configuration is not found
+     */
+    public function getConnection($name)
+    {
+        if (!$this->hasConnection($name)) {
+            throw new Exception("Connection with the name $name is not configured.");
+        }
+        return $this->connections[$name];
+    }
+}
+
