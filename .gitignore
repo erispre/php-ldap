@@ -1,1 +1,4 @@
+# Composer libraries
 vendor/
+# Emacs autosave files
+*~
