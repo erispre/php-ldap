@@ -30,7 +30,7 @@ use Ldap\Exception\Exception;
  * @package Ldap\Config
  */
 class InvalidValueException
-extends ConfigException
+extends InvalidConfigException
 {
     /**
      * Configuration object that raised the exception.

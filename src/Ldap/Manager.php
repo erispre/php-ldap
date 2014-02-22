@@ -81,6 +81,8 @@ class Manager
 
     /**
      * Retrieves a connection to a server.
+     * 
+     * @see Connection::__construct() This initializes the connection.
      *
      * @param string $name Name of the server
      * @return Connection

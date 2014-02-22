@@ -25,6 +25,7 @@ namespace Ldap\Config;
 use Ldap\Connection;
 use Ldap\Exception\Exception;
 use Ldap\Exception\Config\MissingConfigKeyException;
+use Ldap\Exception\Config\InvalidValueException;
 
 /**
  * Configuration for binding to a server
@@ -53,11 +54,11 @@ class BindConfig
     public function __construct(array $config)
     {
         foreach (array('dn', 'password') as $key) {
-            if (!isset($config[$key]))
+            if (!array_key_exists($key, $config))
                 throw new MissingConfigKeyException($key);
         }
-        $this->dn = $config['dn'];
-        $this->password = $config['password'];
+        $this->setDn($config['dn']);
+        $this->setPassword($config['password']);
     }
 
     /**
@@ -76,5 +77,54 @@ class BindConfig
             throw new Exception($error);
         }
         return $this;
+    }
+
+    /**
+     * Set the DN to bind to.
+     *
+     * @param null|string $dn
+     * @return $this
+     */
+    public function setDn($dn)
+    {
+        if ($dn !== null && !is_string($dn))
+            throw new InvalidValueException('dn', $dn, 'string', $this);
+
+        $this->dn = $dn;
+    }
+
+    /**
+     * Get the DN to bind to
+     *
+     * @return string
+     */
+    public function getDn()
+    {
+        return $this->dn;
+    }
+
+    /**
+     * Set the password to bind with.
+     *
+     * @param null|string $password
+     * @return $this
+     */
+    public function setPassword($password)
+    {
+        if ($password !== null && !is_string($password))
+            throw new InvalidValueException('password', $password, 'string', $this);
+        
+        $this->password = $password;
+        return $this;
+    }
+
+    /**
+     * Get the password to bind with
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 }

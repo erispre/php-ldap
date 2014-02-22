@@ -45,7 +45,15 @@ class Connection
     protected $config;
 
     /**
-     * Construct a new connection
+     * Construct a new connection.
+     *
+     * This will create a new connection resource and open the
+     * connection by providing a bind to the server.  If no bind
+     * credentials where provided, an anonymous bind is attempted.
+     * This bind is necessary because PHP will not actually open the
+     * connection until it is necessary.
+     *
+     * @see Config\ConnectionConfig::__construct() Providing no bind credentials results in an anonymous bind.
      *
      * @param string|null $hostname May be a LDAP URL for OpenLDAP 2.*
      * @param int $port Port to connect on
